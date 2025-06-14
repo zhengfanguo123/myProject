@@ -274,3 +274,22 @@ input:checked + .slider:before {
         align-items: center;
     }
 }
+
+.page-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.page-title .help {
+    color: #0d6efd;
+}
+
+.breadcrumbs {
+    padding: 15px;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+}

@@ -33,6 +33,26 @@ class User(db.Model):
             'enabled': self.is_enabled,
         }
 
+
+class UserGroup(db.Model):
+    __tablename__ = 'user_group'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    parent_id = db.Column(db.Integer, db.ForeignKey('user_group.id'), nullable=True)
+    user_count = db.Column(db.Integer, default=0)
+    is_enabled = db.Column(db.Boolean, default=True)
+
+    parent = db.relationship('UserGroup', remote_side=[id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'parent_id': self.parent_id,
+            'user_count': self.user_count,
+            'enabled': self.is_enabled,
+        }
+
 # Dummy notifications data
 notifications = []
 
@@ -133,6 +153,54 @@ def api_user_audit(user_id):
     logs = [
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'login'},
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'edit profile'},
+    ]
+    return jsonify(logs)
+
+
+@app.route('/wm/user_groups')
+def user_groups_page():
+    groups = UserGroup.query.all()
+    return render_template('user_groups.html', groups=groups, username='admin')
+
+
+@app.route('/api/user_groups', methods=['GET', 'POST'])
+def api_user_groups():
+    if request.method == 'POST':
+        data = request.json or {}
+        group = UserGroup(
+            name=data.get('name'),
+            parent_id=data.get('parent_id'),
+            user_count=data.get('user_count', 0),
+            is_enabled=data.get('enabled', True)
+        )
+        db.session.add(group)
+        db.session.commit()
+        return jsonify(group.to_dict()), 201
+    groups = [g.to_dict() for g in UserGroup.query.all()]
+    return jsonify(groups)
+
+
+@app.route('/api/user_groups/<int:group_id>', methods=['PUT', 'DELETE'])
+def api_user_group_detail(group_id):
+    group = UserGroup.query.get_or_404(group_id)
+    if request.method == 'PUT':
+        data = request.json or {}
+        group.name = data.get('name', group.name)
+        group.parent_id = data.get('parent_id', group.parent_id)
+        group.user_count = data.get('user_count', group.user_count)
+        group.is_enabled = data.get('enabled', group.is_enabled)
+        db.session.commit()
+        return jsonify(group.to_dict())
+    db.session.delete(group)
+    db.session.commit()
+    return jsonify({'status': 'deleted'})
+
+
+@app.route('/api/user_groups/<int:group_id>/audit_log')
+def api_user_group_audit(group_id):
+    logs = [
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'group created'},
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'group edited'},
     ]
     return jsonify(logs)
 
