@@ -6,7 +6,7 @@ This repository contains a simple Flask application demonstrating a dashboard la
 
 1. Install dependencies:
    ```bash
-   pip install flask
+   pip install flask flask_sqlalchemy
    ```
 2. Start the server:
    ```bash
