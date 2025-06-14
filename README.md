@@ -4,9 +4,9 @@ This repository contains a simple Flask application demonstrating a dashboard la
 
 ## Running
 
-1. Install dependencies:
+1. Install dependencies (preferably in a virtual environment):
    ```bash
-   pip install flask flask_sqlalchemy ldap3
+   pip install -r requirements.txt
    ```
 2. Start the server:
    ```bash
