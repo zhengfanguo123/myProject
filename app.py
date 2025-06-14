@@ -54,6 +54,22 @@ class UserGroup(db.Model):
             'enabled': self.is_enabled,
         }
 
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+    permissions = db.Column(db.String(255))  # comma separated
+
+    def to_dict(self):
+        perms = self.permissions.split(',') if self.permissions else []
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'permissions': perms,
+        }
+
 # Dummy notifications data
 notifications = []
 
@@ -210,6 +226,53 @@ def api_user_group_audit(group_id):
     logs = [
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'group created'},
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'group edited'},
+    ]
+    return jsonify(logs)
+
+
+@app.route('/wm/roles')
+def roles_page():
+    roles = Role.query.all()
+    return render_template('roles.html', roles=roles, username='admin')
+
+
+@app.route('/api/roles', methods=['GET', 'POST'])
+def api_roles():
+    if request.method == 'POST':
+        data = request.json or {}
+        role = Role(
+            name=data.get('name'),
+            description=data.get('description'),
+            permissions=','.join(data.get('permissions', []))
+        )
+        db.session.add(role)
+        db.session.commit()
+        return jsonify(role.to_dict()), 201
+    roles = [r.to_dict() for r in Role.query.all()]
+    return jsonify(roles)
+
+
+@app.route('/api/roles/<int:role_id>', methods=['PUT', 'DELETE'])
+def api_role_detail(role_id):
+    role = Role.query.get_or_404(role_id)
+    if request.method == 'PUT':
+        data = request.json or {}
+        role.name = data.get('name', role.name)
+        role.description = data.get('description', role.description)
+        if 'permissions' in data:
+            role.permissions = ','.join(data.get('permissions', []))
+        db.session.commit()
+        return jsonify(role.to_dict())
+    db.session.delete(role)
+    db.session.commit()
+    return jsonify({'status': 'deleted'})
+
+
+@app.route('/api/roles/<int:role_id>/audit_log')
+def api_role_audit(role_id):
+    logs = [
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'role created'},
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'role edited'},
     ]
     return jsonify(logs)
 

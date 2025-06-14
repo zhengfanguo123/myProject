@@ -293,3 +293,12 @@ input:checked + .slider:before {
     background-color: #fff;
     border-bottom: 1px solid #dee2e6;
 }
+
+.tag {
+    display: inline-block;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    padding: 2px 6px;
+    margin: 2px;
+    font-size: 0.85em;
+}
