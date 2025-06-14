@@ -14,8 +14,9 @@ This repository contains a simple Flask application demonstrating a dashboard la
    ```
 3. Open `http://localhost:5000/dashboard` for the dashboard,
    `http://localhost:5000/users` for user management,
-   `http://localhost:5000/wm/user_groups` for the user groups page, or
-   `http://localhost:5000/wm/roles` for role management.
+   `http://localhost:5000/wm/user_groups` for the user groups page,
+   `http://localhost:5000/wm/roles` for role management, or
+   `http://localhost:5000/wm/ldapserver` to manage LDAP server connections.
 
 When creating users through the API or UI, make sure the provided group name
 matches an existing user group. The User Groups page lists all groups along with

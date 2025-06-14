@@ -70,6 +70,31 @@ class Role(db.Model):
             'permissions': perms,
         }
 
+
+class LdapServer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    type = db.Column(db.String(50))
+    ldaps = db.Column(db.Boolean, default=False)
+    host = db.Column(db.String(255))
+    port = db.Column(db.Integer)
+    dn_path = db.Column(db.String(255))
+    default_user_group = db.Column(db.String(80))
+    default_role = db.Column(db.String(80))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'type': self.type,
+            'ldaps': self.ldaps,
+            'host': self.host,
+            'port': self.port,
+            'dn_path': self.dn_path,
+            'default_user_group': self.default_user_group,
+            'default_role': self.default_role,
+        }
+
 # Dummy notifications data
 notifications = []
 
@@ -273,6 +298,77 @@ def api_role_audit(role_id):
     logs = [
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'role created'},
         {'timestamp': datetime.utcnow().isoformat(), 'action': 'role edited'},
+    ]
+    return jsonify(logs)
+
+
+@app.route('/wm/ldapserver')
+def ldapserver_page():
+    servers = LdapServer.query.all()
+    return render_template('ldap_servers.html', servers=servers, username='admin')
+
+
+@app.route('/wm/add_ldapserver')
+def add_ldapserver_page():
+    groups = UserGroup.query.all()
+    roles = Role.query.all()
+    return render_template('ldap_server_form.html', action='create', groups=groups, roles=roles, username='admin')
+
+
+@app.route('/wm/edit_ldapserver/<int:server_id>')
+def edit_ldapserver_page(server_id):
+    server = LdapServer.query.get_or_404(server_id)
+    groups = UserGroup.query.all()
+    roles = Role.query.all()
+    return render_template('ldap_server_form.html', action='edit', server=server, groups=groups, roles=roles, username='admin')
+
+
+@app.route('/api/ldap_servers', methods=['GET', 'POST'])
+def api_ldap_servers():
+    if request.method == 'POST':
+        data = request.json or {}
+        server = LdapServer(
+            name=data.get('name'),
+            type=data.get('type'),
+            ldaps=data.get('ldaps', False),
+            host=data.get('host'),
+            port=data.get('port'),
+            dn_path=data.get('dn_path'),
+            default_user_group=data.get('default_user_group'),
+            default_role=data.get('default_role'),
+        )
+        db.session.add(server)
+        db.session.commit()
+        return jsonify(server.to_dict()), 201
+    servers = [s.to_dict() for s in LdapServer.query.all()]
+    return jsonify(servers)
+
+
+@app.route('/api/ldap_servers/<int:server_id>', methods=['PUT', 'DELETE'])
+def api_ldap_server_detail(server_id):
+    server = LdapServer.query.get_or_404(server_id)
+    if request.method == 'PUT':
+        data = request.json or {}
+        server.name = data.get('name', server.name)
+        server.type = data.get('type', server.type)
+        server.ldaps = data.get('ldaps', server.ldaps)
+        server.host = data.get('host', server.host)
+        server.port = data.get('port', server.port)
+        server.dn_path = data.get('dn_path', server.dn_path)
+        server.default_user_group = data.get('default_user_group', server.default_user_group)
+        server.default_role = data.get('default_role', server.default_role)
+        db.session.commit()
+        return jsonify(server.to_dict())
+    db.session.delete(server)
+    db.session.commit()
+    return jsonify({'status': 'deleted'})
+
+
+@app.route('/api/ldap_servers/<int:server_id>/audit_log')
+def api_ldap_server_audit(server_id):
+    logs = [
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'server created'},
+        {'timestamp': datetime.utcnow().isoformat(), 'action': 'server edited'},
     ]
     return jsonify(logs)
 
