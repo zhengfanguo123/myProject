@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Manager - Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        <ul>
+            <li class="logo">R3S</li>
+            <li class="active"><a href="/dashboard">Home</a></li>
+            <li><a href="/users">Users</a></li>
+            <li>User Groups</li>
+            <li>Roles</li>
+            <li>Dashboards</li>
+            <li>LDAP Server</li>
+            <li>Licensing</li>
+            <li>Notification Email</li>
+            <li>HPC</li>
+            <li>Models</li>
+            <li>Input Files</li>
+            <li>Scheduling</li>
+        </ul>
+    </nav>
+    <div class="content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span class="username">{{ username }}</span>
+                <i class="fa-solid fa-user"></i>
+                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </header>
+        <main>
+            <section class="greeting">
+                <h1>Hello! {{ username }}</h1>
+                <p class="subtitle">Welcome to R3S Workflow Manager</p>
+            </section>
+            <section class="dashboard-body">
+                <div class="notifications">
+                    <div class="header">
+                        <h2><i class="fa-solid fa-bell"></i> Notifications</h2>
+                        <button class="delete-all">Delete all</button>
+                    </div>
+                    <ul id="notification-list">
+                        <li class="empty">No Notifications Yet</li>
+                    </ul>
+                </div>
+                <div class="illustration">
+                    <svg width="200" height="150" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="60" height="40" fill="#cfe2ff" stroke="#0d6efd" />
+                        <rect x="130" y="10" width="60" height="40" fill="#cfe2ff" stroke="#0d6efd" />
+                        <rect x="70" y="90" width="60" height="40" fill="#cfe2ff" stroke="#0d6efd" />
+                        <line x1="40" y1="50" x2="100" y2="90" stroke="#0d6efd" />
+                        <line x1="160" y1="50" x2="100" y2="90" stroke="#0d6efd" />
+                    </svg>
+                </div>
+            </section>
+        </main>
+    </div>
+</div>
+</body>
+</html>
