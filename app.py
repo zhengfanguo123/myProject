@@ -1,10 +1,12 @@
-from flask import Flask, jsonify, render_template, request, send_file, abort
+from flask import Flask, jsonify, render_template, request, send_file, abort, session, redirect, url_for
+from ldap3 import Server as Ldap3Server, Connection as Ldap3Connection, ALL as LDAP_ALL
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import csv
 import io
 
 app = Flask(__name__)
+app.secret_key = 'change-me'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
 
@@ -97,6 +99,47 @@ class LdapServer(db.Model):
 
 # Dummy notifications data
 notifications = []
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        login_type = request.form.get('login_type', 'local')
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if login_type == 'ldap':
+            server = LdapServer.query.first()
+            if not server:
+                abort(400, 'No LDAP server configured')
+            try:
+                ldap_server = Ldap3Server(server.host, port=server.port, use_ssl=server.ldaps, get_info=LDAP_ALL)
+                conn = Ldap3Connection(ldap_server, user=username, password=password, auto_bind=True)
+                conn.unbind()
+            except Exception:
+                return render_template('login.html', error='Invalid LDAP credentials')
+            user = User.query.filter_by(principal_name=username).first()
+            if not user:
+                user = User(
+                    name=username,
+                    principal_name=username,
+                    role=server.default_role,
+                    email=f'{username}@example.com',
+                    group_name=server.default_user_group
+                )
+                db.session.add(user)
+                db.session.commit()
+        else:
+            user = User.query.filter_by(principal_name=username).first()
+            if not user:
+                return render_template('login.html', error='Unknown user')
+            # Simple password check placeholder
+            if password != 'password':
+                return render_template('login.html', error='Invalid credentials')
+
+        session['user_id'] = user.id
+        return redirect(url_for('dashboard'))
+
+    return render_template('login.html')
 
 @app.route('/dashboard')
 def dashboard():
@@ -395,6 +438,11 @@ def export_users():
 @app.route('/api/notifications')
 def api_notifications():
     return jsonify(notifications)
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
 
 if __name__ == '__main__':
     with app.app_context():

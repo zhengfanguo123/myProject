@@ -6,13 +6,14 @@ This repository contains a simple Flask application demonstrating a dashboard la
 
 1. Install dependencies:
    ```bash
-   pip install flask flask_sqlalchemy
+   pip install flask flask_sqlalchemy ldap3
    ```
 2. Start the server:
    ```bash
    python app.py
    ```
-3. Open `http://localhost:5000/dashboard` for the dashboard,
+3. Open `http://localhost:5000/login` to sign in.
+   After login, visit `http://localhost:5000/dashboard` for the dashboard,
    `http://localhost:5000/users` for user management,
    `http://localhost:5000/wm/user_groups` for the user groups page,
    `http://localhost:5000/wm/roles` for role management, or
