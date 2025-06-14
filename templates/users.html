@@ -48,9 +48,14 @@
             </div>
             <div class="table-filter">
                 <select id="role-filter">
-                    <option value="all">All</option>
+                    <option value="all">All Roles</option>
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
+                </select>
+                <select id="group-filter">
+                    <option value="all">All Groups</option>
+                    <option value="group1">Group1</option>
+                    <option value="group2">Group2</option>
                 </select>
                 <button id="find">Find</button>
             </div>
@@ -104,12 +109,51 @@
     <div class="modal-content">
         <h3>Create User</h3>
         <label>Name <input type="text" id="new-name"></label>
+        <label>Principal Name <input type="text" id="new-principal"></label>
         <label>Email <input type="email" id="new-email"></label>
         <label>Role <input type="text" id="new-role"></label>
         <label>Group <input type="text" id="new-group"></label>
         <label>Password <input type="password" id="new-password"></label>
+        <label class="switch">
+            <input type="checkbox" id="new-enabled" checked>
+            <span class="slider"></span> Enabled
+        </label>
         <button id="save-user">Save</button>
-        <button id="close-modal">Cancel</button>
+        <button id="create-cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="edit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Edit User</h3>
+        <label>Name <input type="text" id="edit-name"></label>
+        <label>Principal Name <input type="text" id="edit-principal"></label>
+        <label>Email <input type="email" id="edit-email"></label>
+        <label>Role <input type="text" id="edit-role"></label>
+        <label>Group <input type="text" id="edit-group"></label>
+        <label class="switch">
+            <input type="checkbox" id="edit-enabled">
+            <span class="slider"></span> Enabled
+        </label>
+        <button id="save-edit">Save</button>
+        <button id="edit-cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="audit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Audit Log</h3>
+        <ul id="audit-list"></ul>
+        <button id="audit-close">Close</button>
+    </div>
+</div>
+
+<div id="transfer-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Transfer Resources</h3>
+        <select id="transfer-target"></select>
+        <button id="transfer-confirm">Transfer</button>
+        <button id="transfer-cancel">Cancel</button>
     </div>
 </div>
 
