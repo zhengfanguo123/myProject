@@ -12,4 +12,6 @@ This repository contains a simple Flask application demonstrating a dashboard la
    ```bash
    python app.py
    ```
-3. Open `http://localhost:5000/dashboard` for the dashboard or `http://localhost:5000/users` for the user management page.
+3. Open `http://localhost:5000/dashboard` for the dashboard,
+   `http://localhost:5000/users` for user management, or
+   `http://localhost:5000/wm/user_groups` for the user groups page.
