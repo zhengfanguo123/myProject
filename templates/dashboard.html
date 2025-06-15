@@ -29,15 +29,16 @@
     <div class="content">
         <header class="top-bar">
             <div class="user-info">
-                <span class="username">{{ username }}</span>
+                <span class="username">{{ user.name }}</span>
                 <i class="fa-solid fa-user"></i>
-                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                <a href="/logout" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
             </div>
         </header>
         <main>
             <section class="greeting">
-                <h1>Hello! {{ username }}</h1>
+                <h1>Hello! {{ user.name }}</h1>
                 <p class="subtitle">Welcome to R3S Workflow Manager</p>
+                <p class="subtitle">Role: {{ user.role }} | Group: {{ user.group_name }}</p>
             </section>
             <section class="dashboard-body">
                 <div class="notifications">

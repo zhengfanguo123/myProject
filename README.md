@@ -22,3 +22,16 @@ This repository contains a simple Flask application demonstrating a dashboard la
 When creating users through the API or UI, make sure the provided group name
 matches an existing user group. The User Groups page lists all groups along with
 their current user counts.
+
+### Login
+
+Use the dropdown on the login page to choose **Local** or **LDAP** authentication.
+For local users, passwords are securely hashed. A sample account is created on first run:
+
+```
+username: admin
+password: admin
+```
+
+For LDAP, the app binds to the configured server and fetches profile attributes such as
+`cn` and `mail` when creating a user record.

@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, send_file, abort, session, redirect, url_for
 from ldap3 import Server as Ldap3Server, Connection as Ldap3Connection, ALL as LDAP_ALL
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import csv
 import io
@@ -17,6 +18,7 @@ class User(db.Model):
     principal_name = db.Column(db.String(120))
     role = db.Column(db.String(80))
     email = db.Column(db.String(120))
+    password_hash = db.Column(db.String(255))
     group_name = db.Column(db.String(80))
     last_login = db.Column(db.DateTime, default=datetime.utcnow)
     is_logged_in = db.Column(db.Boolean, default=False)
@@ -34,6 +36,12 @@ class User(db.Model):
             'logged_in': self.is_logged_in,
             'enabled': self.is_enabled,
         }
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash or '', password)
 
 
 class UserGroup(db.Model):
@@ -114,28 +122,36 @@ def login():
             try:
                 ldap_server = Ldap3Server(server.host, port=server.port, use_ssl=server.ldaps, get_info=LDAP_ALL)
                 conn = Ldap3Connection(ldap_server, user=username, password=password, auto_bind=True)
+                conn.search(server.dn_path, f'(sAMAccountName={username})', attributes=['cn', 'mail'])
+                entry = conn.entries[0] if conn.entries else None
+                full_name = entry.cn.value if entry and 'cn' in entry else username
+                email = entry.mail.value if entry and 'mail' in entry else f'{username}@example.com'
                 conn.unbind()
             except Exception:
                 return render_template('login.html', error='Invalid LDAP credentials')
+
             user = User.query.filter_by(principal_name=username).first()
             if not user:
                 user = User(
-                    name=username,
+                    name=full_name,
                     principal_name=username,
                     role=server.default_role,
-                    email=f'{username}@example.com',
-                    group_name=server.default_user_group
+                    email=email,
+                    group_name=server.default_user_group,
                 )
+                user.set_password('')
                 db.session.add(user)
-                db.session.commit()
+            else:
+                user.name = full_name
+                user.email = email
         else:
             user = User.query.filter_by(principal_name=username).first()
-            if not user:
-                return render_template('login.html', error='Unknown user')
-            # Simple password check placeholder
-            if password != 'password':
+            if not user or not user.check_password(password):
                 return render_template('login.html', error='Invalid credentials')
 
+        user.last_login = datetime.utcnow()
+        user.is_logged_in = True
+        db.session.commit()
         session['user_id'] = user.id
         return redirect(url_for('dashboard'))
 
@@ -143,8 +159,13 @@ def login():
 
 @app.route('/dashboard')
 def dashboard():
-    username = 'fanguo'
-    return render_template('dashboard.html', username=username)
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    user = User.query.get(user_id)
+    if not user:
+        return redirect(url_for('login'))
+    return render_template('dashboard.html', user=user)
 
 
 @app.route('/users')
@@ -157,7 +178,10 @@ def users_page():
     if group and group != 'all':
         query = query.filter_by(group_name=group)
     users = query.all()
-    return render_template('users.html', users=users, username='admin')
+    current_user = None
+    if 'user_id' in session:
+        current_user = User.query.get(session['user_id'])
+    return render_template('users.html', users=users, username=current_user.name if current_user else None)
 
 
 @app.route('/api/users', methods=['GET', 'POST'])
@@ -441,10 +465,26 @@ def api_notifications():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    user_id = session.pop('user_id', None)
+    if user_id:
+        user = User.query.get(user_id)
+        if user:
+            user.is_logged_in = False
+            db.session.commit()
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        if not UserGroup.query.first():
+            default_group = UserGroup(name='Default')
+            db.session.add(default_group)
+        if not Role.query.first():
+            default_role = Role(name='admin', description='Administrator', permissions='')
+            db.session.add(default_role)
+        if not User.query.filter_by(principal_name='admin').first():
+            user = User(name='Admin', principal_name='admin', role='admin', email='admin@example.com', group_name='Default')
+            user.set_password('admin')
+            db.session.add(user)
+        db.session.commit()
     app.run(debug=True)
