@@ -13,7 +13,7 @@ This repository contains a simple Flask application demonstrating a dashboard la
    python app.py
    ```
 3. Open `http://localhost:5000/login` to sign in.
-   After login, visit `http://localhost:5000/dashboard` for the dashboard,
+After login, visit `http://localhost:5000/dashboard` for the dashboard,
    `http://localhost:5000/users` for user management,
    `http://localhost:5000/wm/user_groups` for the user groups page,
    `http://localhost:5000/wm/roles` for role management, or
@@ -22,6 +22,10 @@ This repository contains a simple Flask application demonstrating a dashboard la
 When creating users through the API or UI, make sure the provided group name
 matches an existing user group. The User Groups page lists all groups along with
 their current user counts.
+
+The application checks the SQLite schema on startup and will recreate the
+database if required columns such as `password_hash` are missing. Delete
+`data.db` if you prefer to preserve existing data and run migrations manually.
 
 ### Login
 

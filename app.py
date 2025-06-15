@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, send_file, abort, session, redirect, url_for
 from ldap3 import Server as Ldap3Server, Connection as Ldap3Connection, ALL as LDAP_ALL
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import inspect
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import csv
@@ -475,6 +476,11 @@ def logout():
 
 if __name__ == '__main__':
     with app.app_context():
+        inspector = inspect(db.engine)
+        if 'user' in inspector.get_table_names():
+            cols = [c['name'] for c in inspector.get_columns('user')]
+            if 'password_hash' not in cols:
+                db.drop_all()
         db.create_all()
         if not UserGroup.query.first():
             default_group = UserGroup(name='Default')
