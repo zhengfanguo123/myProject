@@ -493,4 +493,5 @@ if __name__ == '__main__':
             user.set_password('admin')
             db.session.add(user)
         db.session.commit()
-    app.run(debug=True)
+    # Bind to all interfaces so the server is reachable from other machines
+    app.run(host='0.0.0.0', port=5000, debug=True)

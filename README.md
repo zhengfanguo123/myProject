@@ -8,11 +8,12 @@ This repository contains a simple Flask application demonstrating a dashboard la
    ```bash
    pip install -r requirements.txt
    ```
-2. Start the server:
+2. Start the server. To allow access from other machines, bind to all interfaces:
    ```bash
    python app.py
    ```
-3. Open `http://localhost:5000/login` to sign in.
+   The server runs on port 5000 and listens on `0.0.0.0` so it is reachable via your server's IP.
+3. Open `http://<server-ip>:5000/login` to sign in from another device, or use `http://localhost:5000/login` locally.
 After login, visit `http://localhost:5000/dashboard` for the dashboard,
    `http://localhost:5000/users` for user management,
    `http://localhost:5000/wm/user_groups` for the user groups page,
