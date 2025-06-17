@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
   Deploy a Python Flask application using Elastic Beanstalk
-  with a local SQLite database. Creates networking, security,
-  and Route53 records for the environment.
+  with a local SQLite database. Creates networking and
+  security resources for the environment.
 
 Parameters:
   ApplicationName:
@@ -17,9 +17,6 @@ Parameters:
   S3Key:
     Type: String
     Description: Object key for the application zip
-  DomainName:
-    Type: String
-    Description: Fully qualified domain for Route53 (e.g., myapp.example.com)
 
 Resources:
   # VPC and networking setup
@@ -177,21 +174,6 @@ Resources:
         Type: Standard
         Version: '1.0'
 
-  # Route53 hosted zone and record
-  HostedZone:
-    Type: AWS::Route53::HostedZone
-    Properties:
-      Name: !Ref DomainName
-
-  DNSRecord:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      HostedZoneId: !Ref HostedZone
-      Name: !Ref DomainName
-      Type: CNAME
-      TTL: '300'
-      ResourceRecords:
-        - !GetAtt EBEnvironment.EndpointURL
 
 Outputs:
   EnvironmentURL:
@@ -206,6 +188,3 @@ Outputs:
   VPCId:
     Description: Created VPC ID
     Value: !Ref VPC
-  DomainRecord:
-    Description: Route53 record for the application
-    Value: !Ref DNSRecord
