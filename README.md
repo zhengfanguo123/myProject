@@ -40,3 +40,15 @@ password: admin
 
 For LDAP, the app binds to the configured server and fetches profile attributes such as
 `cn` and `mail` when creating a user record.
+
+1. Install dependencies:
+   ```bash
+   pip install flask flask_sqlalchemy
+   ```
+2. Start the server:
+   ```bash
+   python app.py
+   ```
+3. Open `http://localhost:5000/dashboard` for the dashboard,
+   `http://localhost:5000/users` for user management, or
+   `http://localhost:5000/wm/user_groups` for the user groups page.
