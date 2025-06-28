@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Manager - LDAP Servers</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        <ul>
+            <li class="logo">R3S</li>
+            <li><a href="/dashboard">Home</a></li>
+            <li><a href="/users">Users</a></li>
+            <li><a href="/wm/user_groups">User Groups</a></li>
+            <li><a href="/wm/roles">Roles</a></li>
+            <li class="active"><a href="/wm/ldapserver">LDAP Server</a></li>
+            <li>Dashboards</li>
+            <li>Licensing</li>
+            <li>Notification Email</li>
+            <li>HPC</li>
+            <li>Models</li>
+            <li>Input Files</li>
+            <li>Scheduling</li>
+        </ul>
+    </nav>
+    <div class="content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span class="username">{{ username if username else 'admin' }}</span>
+                <i class="fa-solid fa-user"></i>
+                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </header>
+        <main>
+            <div class="breadcrumbs">Home &gt; LDAP Server</div>
+            <div class="page-title">
+                <h2>LDAP Server</h2>
+                <i class="fa-solid fa-circle-question help"></i>
+            </div>
+            <div class="toolbar">
+                <div class="actions">
+                    <button id="edit-ldap" disabled>Edit</button>
+                    <button id="audit-ldap" disabled>Audit Log</button>
+                    <button id="delete-ldap" disabled>Delete</button>
+                    <a href="/wm/add_ldapserver" class="primary">+ Add LDAP Server</a>
+                </div>
+            </div>
+            <table class="users">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Server Name</th>
+                    <th>Type</th>
+                    <th>Host</th>
+                    <th>Port</th>
+                    <th>LDAPS</th>
+                    <th>Default Role</th>
+                    <th>Default Group</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for s in servers %}
+                <tr data-server-id="{{ s.id }}">
+                    <td><input type="checkbox" class="select-server"></td>
+                    <td>{{ s.name }}</td>
+                    <td>{{ s.type }}</td>
+                    <td>{{ s.host }}</td>
+                    <td>{{ s.port }}</td>
+                    <td>{{ '✔' if s.ldaps else '✖' }}</td>
+                    <td>{{ s.default_role }}</td>
+                    <td>{{ s.default_user_group }}</td>
+                </tr>
+                {% endfor %}
+                {% if servers|length == 0 %}
+                <tr><td colspan="8" class="empty">No LDAP Servers</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+
+<div id="ldap-audit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Audit Log</h3>
+        <ul id="ldap-audit-list"></ul>
+        <button id="ldap-audit-close">Close</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/ldap_servers.js') }}"></script>
+</body>
+</html>

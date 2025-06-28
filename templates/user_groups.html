@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Manager - User Groups</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        <ul>
+            <li class="logo">R3S</li>
+            <li><a href="/dashboard">Home</a></li>
+            <li><a href="/users">Users</a></li>
+            <li class="active"><a href="/wm/user_groups">User Groups</a></li>
+            <li><a href="/wm/roles">Roles</a></li>
+            <li>Dashboards</li>
+            <li><a href="/wm/ldapserver">LDAP Server</a></li>
+            <li>Licensing</li>
+            <li>Notification Email</li>
+            <li>HPC</li>
+            <li>Models</li>
+            <li>Input Files</li>
+            <li>Scheduling</li>
+        </ul>
+    </nav>
+    <div class="content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span class="username">{{ username if username else 'admin' }}</span>
+                <i class="fa-solid fa-user"></i>
+                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </header>
+        <main>
+            <div class="breadcrumbs">Home &gt; User Groups</div>
+            <div class="page-title">
+                <h2>User Groups</h2>
+                <i class="fa-solid fa-circle-question help"></i>
+            </div>
+            <div class="toolbar">
+                <div class="actions">
+                    <button id="edit-group" disabled>Edit</button>
+                    <button id="audit-group" disabled>Audit Log</button>
+                    <button id="delete-group" disabled>Delete</button>
+                    <button id="create-group" class="primary">Create User Group</button>
+                </div>
+            </div>
+            <table class="users">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Parent</th>
+                    <th>Users</th>
+                    <th>Enabled</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for g in groups %}
+                <tr data-group-id="{{ g.id }}">
+                    <td><input type="checkbox" class="select-group"></td>
+                    <td>{{ g.name }}</td>
+                    <td>{% if g.parent_id %}{{ g.parent_id }}{% endif %}</td>
+                    <td>{{ g.user_count }}</td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" class="enable-toggle" {% if g.enabled %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if groups|length == 0 %}
+                <tr><td colspan="5" class="empty">No Groups</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+
+<div id="group-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Group</h3>
+        <label>Name <input type="text" id="group-name"></label>
+        <label>Parent ID <input type="number" id="group-parent" min="0"></label>
+        <label class="switch">
+            <input type="checkbox" id="group-enabled" checked>
+            <span class="slider"></span> Enabled
+        </label>
+        <button id="group-save">Save</button>
+        <button id="group-cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="group-audit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Audit Log</h3>
+        <ul id="group-audit-list"></ul>
+        <button id="group-audit-close">Close</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/user_groups.js') }}"></script>
+</body>
+</html>
