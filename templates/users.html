@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Manager - Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        <ul>
+            <li class="logo">R3S</li>
+            <li><a href="/dashboard">Home</a></li>
+            <li class="active"><a href="/users">Users</a></li>
+            <li><a href="/wm/user_groups">User Groups</a></li>
+            <li><a href="/wm/roles">Roles</a></li>
+            <li>Dashboards</li>
+            <li><a href="/wm/ldapserver">LDAP Server</a></li>
+            <li>Licensing</li>
+            <li>Notification Email</li>
+            <li>HPC</li>
+            <li>Models</li>
+            <li>Input Files</li>
+            <li>Scheduling</li>
+        </ul>
+    </nav>
+    <div class="content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span class="username">{{ username if username else 'admin' }}</span>
+                <i class="fa-solid fa-user"></i>
+                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </header>
+        <main>
+            <div class="toolbar">
+                <div class="breadcrumbs">Home &gt; Users</div>
+                <div class="actions">
+                    <button id="export" disabled>Export User List</button>
+                    <button id="edit" disabled>Edit</button>
+                    <button id="audit" disabled>Audit Log</button>
+                    <button id="transfer" disabled>Transfer Resources</button>
+                    <button id="delete" disabled>Delete</button>
+                    <button id="create" class="primary">+ Create User</button>
+                </div>
+            </div>
+            <div class="table-filter">
+                <select id="role-filter">
+                    <option value="all">All Roles</option>
+                    <option value="admin">Admin</option>
+                    <option value="user">User</option>
+                </select>
+                <select id="group-filter">
+                    <option value="all">All Groups</option>
+                    <option value="group1">Group1</option>
+                    <option value="group2">Group2</option>
+                </select>
+                <button id="find">Find</button>
+            </div>
+            <table class="users">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Principal Name</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                    <th>Group</th>
+                    <th>Last Login</th>
+                    <th>Logged In</th>
+                    <th>Enabled</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr data-user-id="{{ user.id }}">
+                    <td><input type="checkbox" class="select-user"></td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.principal_name }}</td>
+                    <td>{{ user.role }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.group_name }}
+                        <i class="fa-solid fa-circle-info"></i>
+                        <i class="fa-solid fa-key"></i>
+                    </td>
+                    <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else '' }}</td>
+                    <td><span class="status {{ 'on' if user.is_logged_in else 'off' }}">{{ 'Yes' if user.is_logged_in else 'No' }}</span></td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" class="enable-toggle" {% if user.is_enabled %}checked{% endif %}>
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if users|length == 0 %}
+                <tr><td colspan="9" class="empty">No Users</td></tr>
+                {% endif %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+
+<!-- Modal Placeholder -->
+<div id="create-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Create User</h3>
+        <label>Name <input type="text" id="new-name"></label>
+        <label>Principal Name <input type="text" id="new-principal"></label>
+        <label>Email <input type="email" id="new-email"></label>
+        <label>Role <input type="text" id="new-role"></label>
+        <label>Group <input type="text" id="new-group"></label>
+        <label>Password <input type="password" id="new-password"></label>
+        <label class="switch">
+            <input type="checkbox" id="new-enabled" checked>
+            <span class="slider"></span> Enabled
+        </label>
+        <button id="save-user">Save</button>
+        <button id="create-cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="edit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Edit User</h3>
+        <label>Name <input type="text" id="edit-name"></label>
+        <label>Principal Name <input type="text" id="edit-principal"></label>
+        <label>Email <input type="email" id="edit-email"></label>
+        <label>Role <input type="text" id="edit-role"></label>
+        <label>Group <input type="text" id="edit-group"></label>
+        <label class="switch">
+            <input type="checkbox" id="edit-enabled">
+            <span class="slider"></span> Enabled
+        </label>
+        <button id="save-edit">Save</button>
+        <button id="edit-cancel">Cancel</button>
+    </div>
+</div>
+
+<div id="audit-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Audit Log</h3>
+        <ul id="audit-list"></ul>
+        <button id="audit-close">Close</button>
+    </div>
+</div>
+
+<div id="transfer-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <h3>Transfer Resources</h3>
+        <select id="transfer-target"></select>
+        <button id="transfer-confirm">Transfer</button>
+        <button id="transfer-cancel">Cancel</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', filename='js/users.js') }}"></script>
+</body>
+</html>
