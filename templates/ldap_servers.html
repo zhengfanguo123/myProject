@@ -17,7 +17,7 @@
             <div class="user-info">
                 <span class="username">{{ username if username else 'admin' }}</span>
                 <i class="fa-solid fa-user"></i>
-                <a href="#" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                <a href="{{ url_for('logout') }}" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
             </div>
         </header>
         <main>

@@ -50,3 +50,7 @@ password: admin
 
 For LDAP, the app binds to the configured server and fetches profile attributes such as
 `cn` and `mail` when creating a user record.
+
+When creating users through the `/api/users` endpoint or the Users page,
+provide a `password` value so the account can authenticate locally. The
+application hashes this value before storing it.

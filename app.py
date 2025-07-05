@@ -214,6 +214,8 @@ def api_users():
             group_name=group_name,
             is_enabled=data.get('enabled', True)
         )
+        if data.get('password'):
+            user.set_password(data['password'])
         db.session.add(user)
         db.session.commit()
         return jsonify(user.to_dict()), 201
@@ -259,6 +261,8 @@ def api_user_detail(user_id):
             if not UserGroup.query.filter_by(name=group_name).first():
                 abort(400, 'group does not exist')
         user.group_name = group_name
+        if data.get('password'):
+            user.set_password(data['password'])
         user.is_enabled = data.get('enabled', user.is_enabled)
         db.session.commit()
         return jsonify(user.to_dict())

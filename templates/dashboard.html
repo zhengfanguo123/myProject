@@ -17,7 +17,7 @@
             <div class="user-info">
                 <span class="username">{{ user.name }}</span>
                 <i class="fa-solid fa-user"></i>
-                <a href="/logout" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                <a href="{{ url_for('logout') }}" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
             </div>
         </header>
         <main>
