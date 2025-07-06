@@ -38,10 +38,11 @@
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                 </select>
-                <select id="group-filter">
+                <select id="group-filter" data-selected="{{ selected_group }}">
                     <option value="all">All Groups</option>
-                    <option value="group1">Group1</option>
-                    <option value="group2">Group2</option>
+                    {% for g in groups %}
+                    <option value="{{ g.name }}">{{ g.name }}</option>
+                    {% endfor %}
                 </select>
                 <button id="find">Find</button>
             </div>
@@ -98,7 +99,9 @@
         <label>Principal Name <input type="text" id="new-principal"></label>
         <label>Email <input type="email" id="new-email"></label>
         <label>Role <input type="text" id="new-role"></label>
-        <label>Group <input type="text" id="new-group"></label>
+        <label>Group
+            <select id="new-group"></select>
+        </label>
         <label>Password <input type="password" id="new-password"></label>
         <label class="switch">
             <input type="checkbox" id="new-enabled" checked>
@@ -116,7 +119,9 @@
         <label>Principal Name <input type="text" id="edit-principal"></label>
         <label>Email <input type="email" id="edit-email"></label>
         <label>Role <input type="text" id="edit-role"></label>
-        <label>Group <input type="text" id="edit-group"></label>
+        <label>Group
+            <select id="edit-group"></select>
+        </label>
         <label class="switch">
             <input type="checkbox" id="edit-enabled">
             <span class="slider"></span> Enabled

@@ -1,4 +1,15 @@
 $(function(){
+    // Populate group dropdowns from enabled groups
+    $.getJSON('/api/user_groups?enabled=true', function(groups){
+        const filter = $('#group-filter').empty();
+        filter.append('<option value="all">All Groups</option>');
+        groups.forEach(g => {
+            const opt = $('<option>').val(g.name).text(g.name);
+            if(filter.data('selected') === g.name) opt.attr('selected', 'selected');
+            filter.append(opt);
+            $('#new-group, #edit-group').append($('<option>').val(g.name).text(g.name));
+        });
+    });
     function updateToolbar(){
         const anySelected = $('.select-user:checked').length > 0;
         $('#export,#edit,#audit,#transfer,#delete').prop('disabled', !anySelected);

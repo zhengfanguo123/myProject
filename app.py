@@ -192,10 +192,13 @@ def users_page():
     if group and group != 'all':
         query = query.filter_by(group_name=group)
     users = query.all()
+    groups = UserGroup.query.filter_by(is_enabled=True).all()
     current_user = None
     if 'user_id' in session:
         current_user = User.query.get(session['user_id'])
-    return render_template('users.html', users=users, username=current_user.name if current_user else None)
+    return render_template('users.html', users=users, groups=groups,
+                           selected_role=role or 'all', selected_group=group or 'all',
+                           username=current_user.name if current_user else None)
 
 
 @app.route('/api/users', methods=['GET', 'POST'])
@@ -313,7 +316,11 @@ def api_user_groups():
         db.session.add(group)
         db.session.commit()
         return jsonify(group.to_dict()), 201
-    groups = [g.to_dict() for g in UserGroup.query.all()]
+    enabled = request.args.get('enabled')
+    query = UserGroup.query
+    if enabled == 'true':
+        query = query.filter_by(is_enabled=True)
+    groups = [g.to_dict() for g in query.all()]
     return jsonify(groups)
 
 
