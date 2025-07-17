@@ -25,14 +25,6 @@ When creating users through the API or UI, make sure the provided group name
 matches an existing user group. The User Groups page lists all groups along with
 their current user counts.
 
-### Sidebar visibility
-
-Menu items shown in the sidebar depend on the role stored in the session. After
-login, `session['role']` is set from the user record. Admins see **Home**,
-**Users**, **User Groups**, **Roles**, **LDAP Server**, **Licensing**, and
-**HPC**. Regular users only see **Home**, **Notification Email**, **Models**,
-**Input Files**, and **Scheduling**. Pages such as `/users` and `/wm/roles` are
-protected with a simple `admin_required` decorator.
 
 The application checks the SQLite schema on startup and will recreate the
 database if required columns such as `password_hash` are missing. Delete
@@ -51,6 +43,3 @@ password: admin
 For LDAP, the app binds to the configured server and fetches profile attributes such as
 `cn` and `mail` when creating a user record.
 
-When creating users through the `/api/users` endpoint or the Users page,
-provide a `password` value so the account can authenticate locally. The
-application hashes this value before storing it.
