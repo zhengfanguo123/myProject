@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Manager - LDAP Server</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <nav class="sidebar">
+        {% include "_sidebar.html" %}
+    </nav>
+    <div class="content">
+        <header class="top-bar">
+            <div class="user-info">
+                <span class="username">{{ username if username else 'admin' }}</span>
+                <i class="fa-solid fa-user"></i>
+                <a href="{{ url_for('logout') }}" class="logout" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+            </div>
+        </header>
+        <main>
+            <div class="breadcrumbs">Home &gt; LDAP Server &gt; {{ 'Add LDAP Server' if action=='create' else 'Edit LDAP Server' }}</div>
+            <div class="page-title">
+                <h2>{{ 'Add LDAP Server' if action=='create' else 'Edit LDAP Server' }}</h2>
+            </div>
+            <div class="toolbar">
+                <div class="actions">
+                    <a href="/wm/ldapserver">Back</a>
+                    <button id="save-ldap" class="primary">{{ 'Create' if action=='create' else 'Save Changes' }}</button>
+                </div>
+            </div>
+            <form id="ldap-form">
+                <label>Server Name <input type="text" id="ldap-name" value="{{ server.name if server else '' }}" required></label><br>
+                <label>Server Type
+                    <select id="ldap-type">
+                        <option value="Active Directory" {% if server and server.type=='Active Directory' %}selected{% endif %}>Active Directory</option>
+                        <option value="OpenLDAP" {% if server and server.type=='OpenLDAP' %}selected{% endif %}>OpenLDAP</option>
+                    </select>
+                </label><br>
+                <label>LDAPS <input type="checkbox" id="ldap-ldaps" {% if server and server.ldaps %}checked{% endif %}></label><br>
+                <label>Host Name <input type="text" id="ldap-host" value="{{ server.host if server else '' }}" required></label><br>
+                <label>Port <input type="number" id="ldap-port" value="{{ server.port if server else 389 }}" required></label><br>
+                <label>DN Path <input type="text" id="ldap-dn" value="{{ server.dn_path if server else '' }}" required></label><br>
+                <label>User Group
+                    <select id="ldap-group">
+                        {% for g in groups %}
+                        <option value="{{ g.name }}" {% if server and server.default_user_group==g.name %}selected{% endif %}>{{ g.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label><br>
+                <label>Role
+                    <select id="ldap-role">
+                        {% for r in roles %}
+                        <option value="{{ r.name }}" {% if server and server.default_role==r.name %}selected{% endif %}>{{ r.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </form>
+        </main>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(function(){
+    $('#ldap-ldaps').on('change', function(){
+        if($(this).is(':checked') && $('#ldap-port').val()=='389') {
+            $('#ldap-port').val(636);
+        } else if(!$(this).is(':checked') && $('#ldap-port').val()=='636') {
+            $('#ldap-port').val(389);
+        }
+    });
+
+    $('#save-ldap').on('click', function(){
+        const data = {
+            name: $('#ldap-name').val(),
+            type: $('#ldap-type').val(),
+            ldaps: $('#ldap-ldaps').is(':checked'),
+            host: $('#ldap-host').val(),
+            port: parseInt($('#ldap-port').val(), 10),
+            dn_path: $('#ldap-dn').val(),
+            default_user_group: $('#ldap-group').val(),
+            default_role: $('#ldap-role').val(),
+        };
+        const id = {{ server.id if server else 'null' }};
+        const url = id ? '/api/ldap_servers/'+id : '/api/ldap_servers';
+        const method = id ? 'PUT' : 'POST';
+        $.ajax({url:url,method:method,contentType:'application/json',data:JSON.stringify(data)})
+            .done(function(){ window.location='/wm/ldapserver'; })
+            .fail(function(xhr){ alert(xhr.responseText || 'Error'); });
+    });
+});
+</script>
+</body>
+</html>
