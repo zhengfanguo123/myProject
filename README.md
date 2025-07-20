@@ -41,7 +41,7 @@ database if required columns such as `password_hash` are missing. Delete
 ### Login
 
 Use the dropdown on the login page to choose **Local** or **LDAP** authentication.
-For local users, passwords are securely hashed. A sample account is created on first run:
+For local users, passwords are securely hashed. On startup the application seeds two roles, `admin` and `user`, along with sample accounts:
 
 ```
 username: admin

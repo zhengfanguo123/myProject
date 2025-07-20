@@ -545,7 +545,8 @@ def logout():
             db.session.commit()
     return redirect(url_for('login'))
 
-if __name__ == '__main__':
+def init_db():
+    """Create tables and seed default roles and users."""
     with app.app_context():
         inspector = inspect(db.engine)
         if 'user' in inspector.get_table_names():
@@ -554,8 +555,7 @@ if __name__ == '__main__':
                 db.drop_all()
         db.create_all()
         if not UserGroup.query.first():
-            default_group = UserGroup(name='Default')
-            db.session.add(default_group)
+            db.session.add(UserGroup(name='Default'))
         if not Role.query.filter_by(name='admin').first():
             db.session.add(Role(name='admin', description='Administrator', permissions=''))
         if not Role.query.filter_by(name='user').first():
@@ -569,5 +569,9 @@ if __name__ == '__main__':
             regular_user.set_password('user1')
             db.session.add(regular_user)
         db.session.commit()
+
+init_db()
+
+if __name__ == '__main__':
     # Bind to all interfaces so the server is reachable from other machines
     app.run(host='0.0.0.0', port=5000, debug=True)
