@@ -1,0 +1,17 @@
+<ul>
+    <li class="logo">R3S</li>
+    <li class="{% if request.path == '/dashboard' %}active{% endif %}"><a href="/dashboard">Home</a></li>
+    {% if session.get('role') == 'admin' %}
+        <li class="{% if request.path.startswith('/users') %}active{% endif %}"><a href="/users">Users</a></li>
+        <li class="{% if request.path.startswith('/wm/user_groups') %}active{% endif %}"><a href="/wm/user_groups">User Groups</a></li>
+        <li class="{% if request.path.startswith('/wm/roles') %}active{% endif %}"><a href="/wm/roles">Roles</a></li>
+        <li class="{% if request.path.startswith('/wm/ldapserver') %}active{% endif %}"><a href="/wm/ldapserver">LDAP Server</a></li>
+        <li>Licensing</li>
+        <li>HPC</li>
+    {% else %}
+        <li class="{% if request.path.startswith('/notification_email') %}active{% endif %}"><a href="/notification_email">Notification Email</a></li>
+        <li class="{% if request.path.startswith('/models') %}active{% endif %}"><a href="/models">Models</a></li>
+        <li class="{% if request.path.startswith('/input_files') %}active{% endif %}"><a href="/input_files">Input Files</a></li>
+        <li class="{% if request.path.startswith('/scheduling') %}active{% endif %}"><a href="/scheduling">Scheduling</a></li>
+    {% endif %}
+</ul>
