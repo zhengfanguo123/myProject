@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.secret_key = 'change-me'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
-openai.api_key = os.getenv('OPENAI_API_KEY')
+openai_client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 
 def login_required(f):
@@ -153,8 +153,8 @@ def generate_image():
     if not prompt:
         return jsonify({'error': 'No prompt provided'}), 400
     try:
-        resp = openai.Image.create(prompt=prompt, n=1, size='512x512')
-        url = resp['data'][0]['url']
+        resp = openai_client.images.generate(prompt=prompt, n=1, size='512x512', model="dall-e-3")
+        url = resp.data[0].url
         return jsonify({'url': url})
     except Exception as e:
         return jsonify({'error': str(e)}), 500

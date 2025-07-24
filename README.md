@@ -4,7 +4,8 @@ This repository contains a simple Flask application demonstrating a dashboard la
 
 ## Running
 
-1. Install dependencies (preferably in a virtual environment):
+1. Install dependencies (preferably in a virtual environment). The requirements
+   file pins the OpenAI library at version 1.x for the DALL·E image generator:
    ```bash
    pip install -r requirements.txt
    ```
@@ -68,13 +69,15 @@ application hashes this value before storing it.
 
 ### Image Generator
 
-The root page (`/`) lets you try OpenAI's image generation service. Set
-`OPENAI_API_KEY` in your environment before starting the server:
+The root page (`/`) lets you try OpenAI's image generation service using the
+OpenAI Python client (version 1 or newer). Set `OPENAI_API_KEY` in your
+environment before starting the server:
 
 ```bash
 export OPENAI_API_KEY=your-key
 python app.py
 ```
 
-Enter a prompt and press **Generate Image**. The backend requests a DALL·E
-image and the result appears on the page without a full reload.
+Enter a prompt and press **Generate Image**. The backend uses the
+`openai.OpenAI()` client to request a DALL·E image and the result appears on the
+page without a full reload.
