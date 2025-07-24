@@ -71,10 +71,17 @@ application hashes this value before storing it.
 
 The root page (`/`) lets you try OpenAI's image generation service using the
 OpenAI Python client (version 1 or newer). Set `OPENAI_API_KEY` in your
-environment before starting the server:
+environment before starting the server. On Linux or macOS use:
 
 ```bash
 export OPENAI_API_KEY=your-key
+python app.py
+```
+
+On Windows PowerShell use:
+
+```powershell
+$env:OPENAI_API_KEY="your-key"
 python app.py
 ```
 

@@ -10,11 +10,18 @@ import io
 import os
 import openai
 
+# Initialize OpenAI client once using the API key from environment
+openai_api_key = os.getenv('OPENAI_API_KEY')
+if not openai_api_key:
+    raise RuntimeError(
+        "OPENAI_API_KEY environment variable not set. Set it to your OpenAI API key."
+    )
+openai_client = openai.OpenAI(api_key=openai_api_key)
+
 app = Flask(__name__)
 app.secret_key = 'change-me'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
-openai_client = openai.OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 
 def login_required(f):
