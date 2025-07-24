@@ -11,12 +11,12 @@ import os
 import openai
 
 # Initialize OpenAI client once using the API key from environment
-openai_api_key = os.getenv('OPENAI_API_KEY')
-if not openai_api_key:
-    raise RuntimeError(
-        "OPENAI_API_KEY environment variable not set. Set it to your OpenAI API key."
-    )
-openai_client = openai.OpenAI(api_key=openai_api_key)
+from dotenv import load_dotenv
+
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
 
 app = Flask(__name__)
 app.secret_key = 'change-me'
