@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DALL·E Image Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<div class="login-container">
+    <form id="generate-form">
+        <label>Prompt
+            <input type="text" id="prompt" required>
+        </label>
+        <button type="submit">Generate Image</button>
+    </form>
+    <div id="result"></div>
+</div>
+<script src="{{ url_for('static', filename='js/generate.js') }}"></script>
+</body>
+</html>

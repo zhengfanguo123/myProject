@@ -7,11 +7,14 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import csv
 import io
+import os
+import openai
 
 app = Flask(__name__)
 app.secret_key = 'change-me'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 db = SQLAlchemy(app)
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 def login_required(f):
@@ -136,6 +139,25 @@ class LdapServer(db.Model):
 
 # Dummy notifications data
 notifications = []
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/generate', methods=['POST'])
+def generate_image():
+    data = request.get_json() or {}
+    prompt = data.get('prompt')
+    if not prompt:
+        return jsonify({'error': 'No prompt provided'}), 400
+    try:
+        resp = openai.Image.create(prompt=prompt, n=1, size='512x512')
+        url = resp['data'][0]['url']
+        return jsonify({'url': url})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

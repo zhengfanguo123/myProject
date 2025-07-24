@@ -65,3 +65,16 @@ For LDAP, the app binds to the configured server and fetches profile attributes 
 When creating users through the `/api/users` endpoint or the Users page,
 provide a `password` value so the account can authenticate locally. The
 application hashes this value before storing it.
+
+### Image Generator
+
+The root page (`/`) lets you try OpenAI's image generation service. Set
+`OPENAI_API_KEY` in your environment before starting the server:
+
+```bash
+export OPENAI_API_KEY=your-key
+python app.py
+```
+
+Enter a prompt and press **Generate Image**. The backend requests a DALL·E
+image and the result appears on the page without a full reload.
