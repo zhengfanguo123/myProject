@@ -34,6 +34,7 @@ login, `session['role']` is set from the user record. Admins see **Home**,
 **Input Files**, and **Scheduling**. Pages such as `/users` and `/wm/roles` are
 restricted with `roles_required('admin')`.
 
+
 The application checks the SQLite schema on startup and will recreate the
 database if required columns such as `password_hash` are missing. Delete
 `data.db` if you prefer to preserve existing data and run migrations manually.
@@ -42,6 +43,7 @@ database if required columns such as `password_hash` are missing. Delete
 
 Use the dropdown on the login page to choose **Local** or **LDAP** authentication.
 For local users, passwords are securely hashed. On startup the application seeds two roles, `admin` and `user`, along with sample accounts:
+
 
 ```
 username: admin
@@ -59,6 +61,7 @@ to management pages depend on this role. The helper decorator `roles_required`
 can be used to restrict routes, and `admin_required` now simply calls
 `roles_required('admin')`.
 
+
 For LDAP, the app binds to the configured server and fetches profile attributes such as
 `cn` and `mail` when creating a user record.
 
@@ -69,4 +72,5 @@ application hashes this value before storing it.
 ## Kiosk
 
 A basic kiosk interface is available at `/kiosk`. This page lets customers browse menu items and add them to a cart. Checkout is currently a placeholder.
+
 
