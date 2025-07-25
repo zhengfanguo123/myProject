@@ -329,6 +329,16 @@ input:checked + .slider:before {
     border-radius: 4px;
     cursor: pointer;
 }
+.login-container .kiosk-link {
+    display: block;
+    margin-top: 10px;
+    background-color: #6c757d;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
 .error {
     color: red;
 }
