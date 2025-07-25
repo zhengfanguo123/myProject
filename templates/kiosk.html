@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block title %}Kiosk{% endblock %}
+{% block content %}
+<div id="kiosk-app" class="kiosk">
+    <div class="kiosk-menu">
+        <div class="categories"></div>
+        <div class="items"></div>
+    </div>
+    <div class="kiosk-cart">
+        <h2>Cart</h2>
+        <ul class="cart-items"></ul>
+        <div class="total"></div>
+        <button id="checkout-btn">Checkout</button>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/kiosk.js') }}"></script>
+{% endblock %}

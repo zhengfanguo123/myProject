@@ -534,6 +534,12 @@ def export_users():
 def api_notifications():
     return jsonify(notifications)
 
+
+@app.route('/kiosk')
+def kiosk_page():
+    """Public kiosk interface for placing orders."""
+    return render_template('kiosk.html', user=None, username='Guest')
+
 @app.route('/logout')
 def logout():
     user_id = session.pop('user_id', None)
