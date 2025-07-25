@@ -332,3 +332,30 @@ input:checked + .slider:before {
 .error {
     color: red;
 }
+
+/* Kiosk styles */
+.kiosk {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+}
+.kiosk-menu {
+    flex: 2;
+}
+.kiosk-cart {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+}
+.kiosk button {
+    padding: 10px 15px;
+    margin: 5px;
+}
+.item-card {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fff;
+}

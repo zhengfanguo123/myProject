@@ -65,3 +65,8 @@ For LDAP, the app binds to the configured server and fetches profile attributes 
 When creating users through the `/api/users` endpoint or the Users page,
 provide a `password` value so the account can authenticate locally. The
 application hashes this value before storing it.
+
+## Kiosk
+
+A basic kiosk interface is available at `/kiosk`. This page lets customers browse menu items and add them to a cart. Checkout is currently a placeholder.
+
