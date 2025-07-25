@@ -536,6 +536,7 @@ def api_notifications():
 
 
 @app.route('/kiosk')
+@app.route('/kiosk/')
 def kiosk_page():
     """Public kiosk interface for placing orders."""
     return render_template('kiosk.html', user=None, username='Guest')

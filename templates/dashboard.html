@@ -5,6 +5,7 @@
     <h1>Hello! {{ user.name }}</h1>
     <p class="subtitle">Welcome to R3S Workflow Manager</p>
     <p class="subtitle">Role: {{ user.role }} | Group: {{ user.group_name }}</p>
+    <a href="{{ url_for('kiosk_page') }}" class="kiosk-link">Open Kiosk</a>
 </section>
 <section class="dashboard-body">
     <div class="notifications">

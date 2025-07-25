@@ -339,6 +339,17 @@ input:checked + .slider:before {
     border-radius: 4px;
     text-decoration: none;
 }
+
+/* Generic kiosk link/button styling */
+.kiosk-link {
+    display: inline-block;
+    background-color: #6c757d;
+    color: #fff;
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+}
 .error {
     color: red;
 }

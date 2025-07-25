@@ -8,10 +8,12 @@
         <li class="{% if request.path.startswith('/wm/ldapserver') %}active{% endif %}"><a href="/wm/ldapserver">LDAP Server</a></li>
         <li>Licensing</li>
         <li>HPC</li>
+        <li class="{% if request.path.startswith('/kiosk') %}active{% endif %}"><a href="{{ url_for('kiosk_page') }}">Kiosk</a></li>
     {% else %}
         <li class="{% if request.path.startswith('/notification_email') %}active{% endif %}"><a href="/notification_email">Notification Email</a></li>
         <li class="{% if request.path.startswith('/models') %}active{% endif %}"><a href="/models">Models</a></li>
         <li class="{% if request.path.startswith('/input_files') %}active{% endif %}"><a href="/input_files">Input Files</a></li>
         <li class="{% if request.path.startswith('/scheduling') %}active{% endif %}"><a href="/scheduling">Scheduling</a></li>
+        <li class="{% if request.path.startswith('/kiosk') %}active{% endif %}"><a href="{{ url_for('kiosk_page') }}">Kiosk</a></li>
     {% endif %}
 </ul>
